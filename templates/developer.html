@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jyoti Ranjan Behera - Portfolio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    
+    :root {
+      --primary: #6c63ff;
+      --secondary: #4e54c8;
+      --dark: #13131f;
+      --light: #f8f9fa;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
+    }
+    
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    
+    .hero-content {
+      z-index: 10;
+      position: relative;
+    }
+    
+    .glowing-text {
+      text-shadow: 0 0 10px rgba(108, 99, 255, 0.7);
+      animation: glow 2s infinite alternate;
+    }
+    
+    .animated-gradient {
+      background: linear-gradient(-45deg, #6c63ff, #4e54c8, #00bcd4, #03a9f4);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    
+    .title-text {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s forwards 0.2s;
+    }
+    
+    .subtitle-text {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s forwards 0.4s;
+    }
+    
+    .content-block {
+      padding: 2rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--primary);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s forwards 0.6s;
+    }
+    
+    .content-block h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s forwards 0.8s;
+    }
+    
+    .social-link {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      color: var(--light);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .social-link:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+    }
+    
+    /* Animation keyframes */
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px rgba(108, 99, 255, 0.7);
+      }
+      to {
+        text-shadow: 0 0 20px rgba(108, 99, 255, 1), 0 0 30px rgba(108, 99, 255, 0.8), 0 0 40px rgba(108, 99, 255, 0.6);
+      }
+    }
+    
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .circles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .circles li {
+      position: absolute;
+      display: block;
+      list-style: none;
+      width: 20px;
+      height: 20px;
+      background: rgba(108, 99, 255, 0.2);
+      animation: animate 25s linear infinite;
+      bottom: -150px;
+    }
+    
+    .circles li:nth-child(1) {
+      left: 25%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+    }
+    
+    .circles li:nth-child(2) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 2s;
+      animation-duration: 12s;
+    }
+    
+    .circles li:nth-child(3) {
+      left: 70%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 4s;
+    }
+    
+    .circles li:nth-child(4) {
+      left: 40%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+      animation-duration: 18s;
+    }
+    
+    .circles li:nth-child(5) {
+      left: 65%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 0s;
+    }
+    
+    .circles li:nth-child(6) {
+      left: 75%;
+      width: 110px;
+      height: 110px;
+      animation-delay: 3s;
+    }
+    
+    .circles li:nth-child(7) {
+      left: 35%;
+      width: 150px;
+      height: 150px;
+      animation-delay: 7s;
+    }
+    
+    .circles li:nth-child(8) {
+      left: 50%;
+      width: 25px;
+      height: 25px;
+      animation-delay: 15s;
+      animation-duration: 45s;
+    }
+    
+    .circles li:nth-child(9) {
+      left: 20%;
+      width: 15px;
+      height: 15px;
+      animation-delay: 2s;
+      animation-duration: 35s;
+    }
+    
+    .circles li:nth-child(10) {
+      left: 85%;
+      width: 150px;
+      height: 150px;
+      animation-delay: 0s;
+      animation-duration: 11s;
+    }
+    
+    @keyframes animate {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+      }
+    }
+    
+    .typing-container {
+      display: inline-block;
+    }
+    
+    .typing-text {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid var(--primary);
+      animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+      margin: 0;
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--primary) }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-section">
+    <ul class="circles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    
+    <div class="container hero-content">
+      <div class="row">
+        <div class="col-lg-12 text-center mb-5">
+          <h1 class="title-text">Hi, I'm <span class="animated-gradient">Jyoti Ranjan Behera</span></h1>
+          <div class="typing-container">
+            <h2 class="subtitle-text typing-text">Final Year BTech Student at NIT Rourkela</h2>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="content-block">
+            <h3 class="glowing-text">About Me</h3>
+            <p>Hello, I'm Jyoti Ranjan Behera, a final year BTech student at NIT Rourkela. I am passionate about technology and its potential to make a positive impact on people's lives. My journey in tech has been exciting, and I'm eager to share my experiences and projects with you.</p>
+          </div>
+          
+          <div class="content-block">
+            <h3 class="glowing-text">My Expertise</h3>
+            <p>With a strong academic background in computer science and engineering, I've developed skills in various technologies and frameworks. I'm constantly learning and exploring new areas to expand my knowledge and capabilities.</p>
+          </div>
+          
+          <div class="content-block">
+            <h3 class="glowing-text">Vision & Goals</h3>
+            <p>My work is driven by a commitment to excellence and a belief that technology should be accessible and beneficial to everyone. I aim to create solutions that are both innovative and user-friendly, making a positive difference in the world.</p>
+          </div>
+          
+          <div class="social-links">
+            <a href="https://myportfolio-seven-rho-81.vercel.app/myportfolio" class="social-link" target="_blank">Portfolio</a>
+            <a href="https://www.linkedin.com/in/jyoti-ranjan-behera-214409249" class="social-link" target="_blank">LinkedIn</a>
+            <a href="https://github.com/jyotir2003" class="social-link" target="_blank">Github</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

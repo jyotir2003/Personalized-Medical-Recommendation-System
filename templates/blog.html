@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediScan - Symptom-Based Disease Diagnosis</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  
+  <!-- Animate CSS for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    /* Custom CSS Variables */
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    
+    /* Body styling with animated gradient background */
+    body {
+      background: #f0f8ff;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* Animated gradient effect for background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(-45deg, #4361ee20, #4cc9f020, #3a0ca320, #4895ef20);
+      background-size: 400% 400%;
+      z-index: -1;
+      animation: gradient 15s ease infinite;
+    }
+    
+    /* Keyframes for gradient animation */
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Navbar styling */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Hero section styling */
+    .hero-section {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Hero content styling */
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    /* Hero title with gradient text effect */
+    .hero-title {
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* Card styling for diagnosis tool */
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+    }
+    
+    /* Card hover effect */
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Feature icon styling */
+    .feature-icon {
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+    
+    /* Primary button styling */
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 30px;
+      padding: 12px 30px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    /* Button hover effect */
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.5);
+    }
+    
+    /* Symptom tag styling */
+    .symptom-tag {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      border-radius: 20px;
+      padding: 5px 15px;
+      margin: 5px;
+      display: inline-block;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    /* Symptom tag hover effect */
+    .symptom-tag:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    /* Selected symptom tag styling */
+    .symptom-tag.selected {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* Result card styling */
+    .result-card {
+      border-radius: 15px;
+      overflow: hidden;
+      display: none;
+    }
+    
+    /* Disease name styling */
+    .disease-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    /* Section title styling with underline */
+    .section-title {
+      position: relative;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+    
+    /* Section title underline with gradient */
+    .section-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+    
+    /* Technology tag styling */
+    .tech-tag {
+      background: rgba(76, 201, 240, 0.1);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 3px 12px;
+      margin: 3px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+    
+    /* How it works step styling */
+    .how-it-works-step {
+      position: relative;
+      padding-left: 50px;
+      margin-bottom: 30px;
+    }
+    
+    /* Step number styling with gradient */
+    .step-number {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    
+    /* Testimonial card styling */
+    .testimonial-card {
+      padding: 2rem;
+    }
+    
+    /* Quote icon styling */
+    .quote-icon {
+      font-size: 2rem;
+      opacity: 0.2;
+      margin-bottom: 1rem;
+    }
+    
+    /* Footer styling */
+    footer {
+      background: var(--dark);
+      color: var(--light);
+      padding: 3rem 0;
+    }
+    
+    /* Floating particles for background effect */
+    .floating-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    /* Particle styling with floating animation */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      opacity: 0.3;
+      animation: float 8s infinite linear;
+    }
+    
+    /* Float animation keyframes */
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 0.6; }
+      100% { transform: translateY(0) rotate(360deg); opacity: 0.3; }
+    }
+    
+    /* Animation on scroll effect */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+    
+    /* Show class for animation */
+    .animate-on-scroll.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Symptom container transition */
+    #symptomContainer {
+      transition: all 0.3s ease;
+    }
+    
+    /* Pulse animation for elements */
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Pulse animation keyframes */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Typewriter animation for text */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 0 auto;
+      animation: typing 3.5s steps(40, end);
+    }
+    
+    /* Typewriter animation keyframes */
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    /* Technology explanation box */
+    .tech-explanation {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    /* Clickable text styling */
+    .clickable {
+      cursor: pointer;
+      text-decoration: underline dotted var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar Section -->
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <span class="text-primary">Medi</span><span class="text-info">Scan</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#diagnosis">Diagnosis</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#how-it-works">How It Works</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#technology">Technology</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="floating-particles" id="particles"></div>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-content">
+          <div class="animate__animated animate__fadeInLeft">
+            <h1 class="display-4 fw-bold hero-title mb-4">Symptom-Based Disease Diagnosis</h1>
+            <p class="lead mb-4 typewriter">Leveraging AI to provide quick and accurate health insights based on your symptoms.</p>
+            <a href="#diagnosis" class="btn btn-primary animate__animated animate__pulse animate__infinite btn-lg">Try It Now</a>
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="animate__animated animate__fadeInRight">
+            <div class="d-flex justify-content-center">
+              <div class="pulse">
+                <svg width="400" height="400" viewBox="0 0 400 400">
+                  <circle cx="200" cy="200" r="150" fill="none" stroke="rgba(67, 97, 238, 0.3)" stroke-width="20"></circle>
+                  <circle cx="200" cy="200" r="150" fill="none" stroke="rgba(76, 201, 240, 0.8)" stroke-width="10" stroke-dasharray="471" stroke-dashoffset="471">
+                    <animate attributeName="stroke-dashoffset" from="471" to="0" dur="2s" repeatCount="indefinite"/>
+                  </circle>
+                  <path d="M160,160 Q200,100 240,160 Q200,220 160,160" fill="rgba(67, 97, 238, 0.8)" stroke="rgba(76, 201, 240, 0.8)" stroke-width="2">
+                    <animate attributeName="d" values="M160,160 Q200,100 240,160 Q200,220 160,160;M150,170 Q200,120 250,170 Q200,220 150,170;M160,160 Q200,100 240,160 Q200,220 160,160" dur="3s" repeatCount="indefinite"/>
+                  </path>
+                  <text x="200" y="210" text-anchor="middle" fill="#212529" font-size="24" font-weight="bold">MediScan</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnosis Tool Section -->
+  <section class="py-5" id="diagnosis">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center animate-on-scroll">
+          <h2 class="mb-4 fw-bold">Symptom Diagnosis Tool</h2>
+          <p class="lead mb-5">Select the symptoms you're experiencing, and our AI-powered system will analyze them to suggest potential diagnoses.</p>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card animate-on-scroll">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-4"><i class="fas fa-search me-2"></i>Select Your Symptoms</h5>
+              <div id="symptomContainer" class="mb-4">
+                <div class="symptom-tag">Fever</div>
+                <div class="symptom-tag">Headache</div>
+                <div class="symptom-tag">Fatigue</div>
+                <div class="symptom-tag">Cough</div>
+                <div class="symptom-tag">Nausea</div>
+                <div class="symptom-tag">Chest Pain</div>
+                <div class="symptom-tag">Dizziness</div>
+                <div class="symptom-tag">Sore Throat</div>
+                <div class="symptom-tag">Shortness of Breath</div>
+                <div class="symptom-tag">Joint Pain</div>
+                <div class="symptom-tag">Muscle Ache</div>
+                <div class="symptom-tag">Chills</div>
+                <div class="symptom-tag">Rash</div>
+              </div>
+              <div class="text-center">
+                <button id="diagnoseBtn" class="btn btn-primary">Diagnose My Symptoms</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Diagnosis Result Card (Initially hidden) -->
+          <div class="card result-card mt-4">
+            <div class="card-body">
+              <h5 class="card-title">Possible Diagnoses</h5>
+              <div id="diagnosisResults"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-5 bg-light" id="how-it-works">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="section-title">How It Works</h2>
+          <p class="lead">Our system uses advanced machine learning algorithms to analyze your symptoms and provide potential diagnoses.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="how-it-works-step">
+            <div class="step-number">1</div>
+            <h5>Select Symptoms</h5>
+            <p>Choose from our comprehensive list of symptoms that match what you're experiencing.</p>
+          </div>
+          <div class="how-it-works-step">
+            <div class="step-number">2</div>
+            <h5>AI Analysis</h5>
+            <p>Our advanced AI model processes your symptoms and matches them against known disease patterns.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="how-it-works-step">
+            <div class="step-number">3</div>
+            <h5>Get Results</h5>
+            <p>Receive potential diagnoses along with detailed information about each condition.</p>
+          </div>
+          <div class="how-it-works-step">
+            <div class="step-number">4</div>
+            <h5>Consult Professional</h5>
+            <p>We always recommend consulting with a healthcare professional for confirmation and treatment.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Advanced AI Technology</h5>
+              <p class="card-text">Our system uses a Decision Tree Classifier model trained on comprehensive medical data to provide accurate predictions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Section -->
+  <section class="py-5" id="technology">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="section-title">Technology Behind MediScan</h2>
+          <p class="lead">We leverage cutting-edge technologies to deliver accurate and reliable health insights.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="feature-icon"><i class="fas fa-brain"></i></div>
+              <h5 class="card-title">Machine Learning</h5>
+              <p class="card-text">Our core technology is a Decision Tree Classifier model trained on extensive medical datasets to recognize symptom patterns.</p>
+              <button class="btn btn-outline-primary btn-sm clickable" data-tech="ml">Learn More</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="feature-icon"><i class="fas fa-server"></i></div>
+              <h5 class="card-title">Flask Backend</h5>
+              <p class="card-text">We use Flask, a lightweight Python web framework, to handle server-side logic and model integration.</p>
+              <button class="btn btn-outline-primary btn-sm clickable" data-tech="flask">Learn More</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="feature-icon"><i class="fas fa-code"></i></div>
+              <h5 class="card-title">Frontend Development</h5>
+              <p class="card-text">The user interface is built with HTML, CSS, JavaScript, and Bootstrap for a responsive and intuitive experience.</p>
+              <button class="btn btn-outline-primary btn-sm clickable" data-tech="frontend">Learn More</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Technology Explanation Box -->
+      <div class="row mt-4">
+        <div class="col-lg-10 mx-auto">
+          <div id="mlExplanation" class="tech-explanation">
+            <h5>Machine Learning Technology</h5>
+            <p>Our system employs a Decision Tree Classifier, a supervised learning algorithm that creates a model predicting the value of a target variable by learning simple decision rules inferred from the data features.</p>
+            <p>The model was trained on a comprehensive dataset containing symptoms and corresponding diseases. Through this training process, the algorithm learned to recognize patterns and relationships between various symptoms and potential medical conditions.</p>
+            <p>When you input your symptoms, the model evaluates them against what it has learned to determine the most likely diagnoses. This approach balances accuracy with interpretability, allowing us to understand how conclusions are reached.</p>
+          </div>
+          
+          <div id="flaskExplanation" class="tech-explanation">
+            <h5>Flask Backend Technology</h5>
+            <p>Flask is a micro web framework written in Python. It's lightweight yet powerful, making it ideal for our application's needs.</p>
+            <p>The backend handles several critical functions:</p>
+            <ul>
+              <li>Receiving symptom data from the frontend</li>
+              <li>Loading and utilizing the trained machine learning model</li>
+              <li>Processing the data through the model to generate predictions</li>
+              <li>Returning results to the frontend for display</li>
+            </ul>
+            <p>Using Flask allows us to efficiently connect our Python-based machine learning model with the web interface, creating a seamless experience for users.</p>
+          </div>
+          
+          <div id="frontendExplanation" class="tech-explanation">
+            <h5>Frontend Development Technology</h5>
+            <p>The frontend is built using modern web development technologies:</p>
+            <ul>
+              <li><strong>HTML5</strong>: Provides the structure and content of our web pages</li>
+              <li><strong>CSS3</strong>: Controls the visual presentation and layout</li>
+              <li><strong>JavaScript</strong>: Enables interactive elements and dynamic behavior</li>
+              <li><strong>Bootstrap</strong>: A responsive framework that ensures our application looks great on all devices</li>
+              <li><strong>Font Awesome</strong>: Provides icons for visual enhancement</li>
+            </ul>
+            <p>These technologies work together to create an intuitive interface where users can easily input their symptoms and receive clear, actionable information.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-5 bg-light" id="about">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="section-title">About MediScan</h2>
+          <p class="lead">Empowering individuals with quick health insights through advanced technology.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 animate-on-scroll">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Our Mission</h5>
+              <p class="card-text">At MediScan, our mission is to make healthcare more accessible by providing individuals with a quick, convenient way to gain insights into their health concerns.</p>
+              <p class="card-text">We believe that technology can bridge the gap between patients and healthcare providers, creating a more efficient healthcare ecosystem.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Our Vision</h5>
+              <p class="card-text">Our vision is to become a trusted companion in everyone's health journey, providing reliable information that empowers individuals to make informed decisions about their wellbeing.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 animate-on-scroll">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Why Choose MediScan?</h5>
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-check-circle me-2 text-primary"></i> AI-Powered Accuracy</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-check-circle me-2 text-primary"></i> Comprehensive Symptom Database</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-check-circle me-2 text-primary"></i> User-Friendly Interface</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-check-circle me-2 text-primary"></i> Detailed Disease Information</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span><i class="fas fa-check-circle me-2 text-primary"></i> Privacy-Focused</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-5" id="testimonials">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="section-title">What Our Users Say</h2>
+          <p class="lead">Hear from real users who have benefited from MediScan.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card testimonial-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <p class="card-text">MediScan helped me identify potential issues before my doctor's appointment. It gave me peace of mind and prepared me with questions to ask.</p>
+            <div class="text-end">
+              <h6 class="text-primary">- Sarah J.</h6>
+              <small>Health Enthusiast</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card testimonial-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <p class="card-text">As a busy professional, I don't always have time for doctor visits. MediScan provides quick insights that help me decide when I need to seek medical attention.</p>
+            <div class="text-end">
+              <h6 class="text-primary">- Michael T.</h6>
+              <small>Corporate Manager</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <div class="card testimonial-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <p class="card-text">I use MediScan as a first step when I feel unwell. It's not a replacement for doctors, but it helps me understand what might be wrong and how urgent it is.</p>
+            <div class="text-end">
+              <h6 class="text-primary">- Emma R.</h6>
+              <small>College Student</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-5 bg-light" id="faq">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="lead">Find answers to common questions about MediScan.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 animate-on-scroll">
+          <div class="accordion" id="faqAccordion1">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                  How accurate is MediScan?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                <div class="accordion-body">
+                  MediScan uses advanced machine learning models trained on comprehensive medical datasets. While it provides informative insights, it's important to remember that it's not a replacement for professional medical diagnosis. Always consult a healthcare professional for confirmation.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                  Is my data secure?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo">
+                <div class="accordion-body">
+                  Yes, we take your privacy seriously. All data entered is processed locally in your browser, and we don't store any personal health information on our servers.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                  Can I use this as a replacement for doctors?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
+                <div class="accordion-body">
+                  No, MediScan is designed to provide informational insights and should not be used as a replacement for professional medical advice, diagnosis, or treatment. Always consult a healthcare professional for medical concerns.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 animate-on-scroll">
+          <div class="accordion" id="faqAccordion2">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                  How often is the medical database updated?
+                </button>
+              </h2>
+              <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour">
+                <div class="accordion-body">
+                  Our medical database and machine learning models are regularly updated with the latest medical research and information to ensure the most accurate and relevant insights.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive">
+                  What should I do if I disagree with the diagnosis?
+                </button>
+              </h2>
+              <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive">
+                <div class="accordion-body">
+                  If you disagree with the diagnosis or have concerns about your health, we strongly recommend consulting with a healthcare professional. They can provide a comprehensive evaluation based on your specific circumstances.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix">
+                  Is this available as a mobile app?
+                </button>
+              </h2>
+              <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix">
+                <div class="accordion-body">
+                  Currently, MediScan is available as a web application that works on both desktop and mobile browsers. We're considering developing dedicated mobile apps in the future based on user feedback.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-lg-4 animate-on-scroll">
+          <h5>About Us</h5>
+          <p>MediScan is committed to making healthcare more accessible through innovative technology solutions.</p>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <h5>Contact Information</h5>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-envelope me-2"></i>info@mediscan.com</li>
+            <li><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</li>
+            <li><i class="fas fa-map-marker-alt me-2"></i>123 Health Tech Drive, Tech City</li>
+          </ul>
+        </div>
+        <div class="col-lg-4 animate-on-scroll">
+          <h5>Follow Us</h5>
+          <div class="social-icons">
+            <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12 text-center animate-on-scroll">
+          <p class="mb-0 text-muted">© 2023 MediScan. All rights reserved. This application is for informational purposes only and is not a substitute for professional medical advice.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkmSxChsr2rrR+jDb4smVRqN6APp0M/8" crossorigin="anonymous"></script>
+  
+  <script>
+    // DOM Content Loaded Event
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animation on Scroll Implementation
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+      
+      // Add animation to elements with animate-on-scroll class
+      document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        observer.observe(el);
+      });
+      
+      // Create floating particles for background effect
+      function createParticles() {
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement('div');
+          particle.classList.add('particle');
+          particle.style.width = `${Math.random() * 10 + 5}px`;
+          particle.style.height = particle.style.width;
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animationDuration = `${Math.random() * 5 + 3}s`;
+          particle.style.animationDelay = `${Math.random() * 5}s`;
+          particlesContainer.appendChild(particle);
+        }
+      }
+      
+      // Initialize particles
+      createParticles();
+      
+      // Symptom selection functionality
+      const symptomTags = document.querySelectorAll('.symptom-tag');
+      const symptomContainer = document.getElementById('symptomContainer');
+      
+      symptomTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+          this.classList.toggle('selected');
+        });
+      });
+      
+      // Diagnosis button functionality
+      const diagnoseBtn = document.getElementById('diagnoseBtn');
+      const resultCard = document.querySelector('.result-card');
+      const diagnosisResults = document.getElementById('diagnosisResults');
+      
+      diagnoseBtn.addEventListener('click', function() {
+        // Get selected symptoms
+        const selectedSymptoms = Array.from(document.querySelectorAll('.symptom-tag.selected'))
+          .map(tag => tag.textContent);
+          
+        // For demonstration purposes, we'll show sample results
+        // In a real application, this would send data to a backend API
+        if (selectedSymptoms.length === 0) {
+          alert('Please select at least one symptom');
+          return;
+        }
+        
+        // Show loading state
+        diagnoseBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Analyzing...';
+        diagnoseBtn.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+          // Generate sample diagnosis results
+          let resultsHTML = '<div class="alert alert-info">These results are for informational purposes only. Consult a healthcare professional for diagnosis.</div>';
+          
+          resultsHTML += '<h5>Possible Conditions:</h5>';
+          resultsHTML += '<ul class="list-group">';
+          
+          // Sample conditions based on symptoms
+          const conditions = getSampleConditions(selectedSymptoms);
+          
+          conditions.forEach(condition => {
+            resultsHTML += `
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold">${condition.name}</div>
+                  <small class="text-muted">${condition.description}</small>
+                </div>
+                <span class="badge bg-primary rounded-pill">${condition.probability}%</span>
+              </li>
+            `;
+          });
+          
+          resultsHTML += '</ul>';
+          
+          // Display results
+          diagnosisResults.innerHTML = resultsHTML;
+          resultCard.style.display = 'block';
+          
+          // Reset button
+          diagnoseBtn.innerHTML = 'Diagnose My Symptoms';
+          diagnoseBtn.disabled = false;
+        }, 1500);
+      });
+      
+      // Sample conditions based on symptoms
+      function getSampleConditions(symptoms) {
+        // This would normally interface with a machine learning model
+        // For demonstration, we'll use simple pattern matching
+        
+        // Common condition patterns
+        const conditionPatterns = [
+          {
+            name: "Common Cold",
+            symptoms: ["Cough", "Sore Throat", "Runny Nose"],
+            description: "A viral infection of the nose and throat.",
+            probability: 75
+          },
+          {
+            name: "Influenza (Flu)",
+            symptoms: ["Fever", "Muscle Ache", "Fatigue", "Cough"],
+            description: "A contagious viral infection affecting the respiratory system.",
+            probability: 80
+          },
+          {
+            name: "COVID-19",
+            symptoms: ["Fever", "Cough", "Shortness of Breath", "Fatigue"],
+            description: "A contagious disease caused by SARS-CoV-2 virus.",
+            probability: 85
+          },
+          {
+            name: "Migraine",
+            symptoms: ["Headache", "Nausea", "Dizziness", "Sensitivity to Light"],
+            description: "A neurological condition causing severe headaches and other symptoms.",
+            probability: 70
+          },
+          {
+            name: "Allergies",
+            symptoms: ["Sneezing", "Runny Nose", "Itchy Eyes", "Cough"],
+            description: "An immune system response to foreign substances like pollen or pet dander.",
+            probability: 70
+          }
+        ];
+        
+        // Find matching conditions based on symptoms
+        const matchingConditions = [];
+        
+        conditionPatterns.forEach(pattern => {
+          const matchedSymptoms = pattern.symptoms.filter(symptom => 
+            symptoms.includes(symptom)
+          );
+          
+          const matchPercentage = (matchedSymptoms.length / pattern.symptoms.length) * 100;
+          
+          if (matchPercentage >= 50) {
+            matchingConditions.push({
+              name: pattern.name,
+              description: pattern.description,
+              probability: Math.round(matchPercentage * pattern.probability / 100)
+            });
+          }
+        });
+        
+        // Sort by probability descending
+        matchingConditions.sort((a, b) => b.probability - a.probability);
+        
+        // Limit to top 3 results
+        return matchingConditions.slice(0, 3);
+      }
+      
+      // Technology explanation functionality
+      const techButtons = document.querySelectorAll('.clickable');
+      const techExplanations = {
+        ml: document.getElementById('mlExplanation'),
+        flask: document.getElementById('flaskExplanation'),
+        frontend: document.getElementById('frontendExplanation')
+      };
+      
+      techButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const techType = this.getAttribute('data-tech');
+          hideAllExplanations();
+          techExplanations[techType].style.display = 'block';
+        });
+      });
+      
+      function hideAllExplanations() {
+        Object.values(techExplanations).forEach(explanation => {
+          explanation.style.display = 'none';
+        });
+      }
+      
+      // Hide explanations when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!event.target.closest('.card') || !event.target.closest('.clickable')) {
+          hideAllExplanations();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
